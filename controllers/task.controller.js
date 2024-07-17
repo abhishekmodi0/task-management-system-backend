@@ -6,7 +6,7 @@ const createTask = (req, callback) => {
 }
 
 const updateTask = (req, callback) => {
-    db.query(dbConstants.updateTask, [req.title, req.description, req.dueDate, req.id], callback)
+    db.query(dbConstants.updateTask, [req.title, req.description, req.dueDate, req.status, req.id], callback)
 }
 
 const updateTaskStatus = (req, callback) => {
@@ -21,4 +21,8 @@ const listTasks = (req, callback) => {
     db.query(dbConstants.getAllTasksForUser, [req[0].id], callback)
 }
 
-module.exports = {createTask, updateTask, deleteTask, listTasks, updateTaskStatus};
+const getTaskById = (id, callback) => {
+    db.query(dbConstants.getTaskById, [id], callback)
+}
+
+module.exports = {createTask, updateTask, deleteTask, listTasks, updateTaskStatus, getTaskById};

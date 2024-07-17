@@ -22,9 +22,12 @@ const userLogin = (req, callback) => {
         if(error){
             callback(error, result)
         } else if(result.length > 0) {
-            if(await  bcrypt.compare(req.password, result[0].password)){
+            let password = globalThis.atob(req.password);
+            if(await  bcrypt.compare(password, result[0].password)){
                 const token  = await authorization({ user : req.email});
                 const response = successConstants.loginSuccess;
+                delete result[0].password;
+                response[0].user = result[0],
                 response[0].token = token;
                 callback(error, response)
             }

@@ -8,59 +8,59 @@ const { verifyAccessToken } = require('../utility/verifyAccessToken');
 
 
 router.post('/register', 
-    body("email").notEmpty().isEmail(),
-    body("password").notEmpty(), 
-    body("firstName").notEmpty(), 
-    body("lastName").notEmpty(), 
-    body("address").notEmpty(), 
+    body("email").isEmail().withMessage("invalid email entered"),
+    body("password").notEmpty().withMessage("Password can not be empty"), 
+    body("firstName").notEmpty().withMessage("First name can not be empty"), 
+    body("lastName").notEmpty().withMessage("Last name can not be empty"), 
+    body("address").notEmpty().withMessage("Address can not be empty"), 
     (req,res,next) => {
     const result = validationResult(req);
     if(result.isEmpty()) {
         userController.registerUser(req.body, (error, result)=> {
             if(error){ 
-                res.json(error)
+                res.status(400).json({ error: error });
             } else {
                 const response = successConstants.userRegistred;
                 response[0].userId = result.insertId
                 res.json(response)
             }
         })
-    } else res.send({ errors: result.array() });
+    } else res.status(400).json({ error: [ {message : result.errors[0].msg}]});
 
 });
 
-router.get('/login', 
-    body("email").notEmpty().isEmail(),
-    body("password").notEmpty(), 
+router.post('/login', 
+    body("email").isEmail().withMessage('Email id is not valid'),
+    body("password").notEmpty().withMessage('Password can not be empty'), 
     (req,res,next) => {
     const result = validationResult(req);
     if(result.isEmpty()) {
         userController.userLogin(req.body, (error, result) => {
             if(error){
-                res.json(error)
+                res.status(400).json({ error: error });
             } else{ 
                 res.json(result)
             }
     
         })
-    } else res.send({ errors: result.array() });
+    } else res.status(400).json({ error: [ {message : result.errors[0].msg}]}); 
 });
 
 router.post('/task/create', verifyAccessToken,
     body("title").notEmpty().isString().isLength({min : 1, max : 100}),
     body("description").notEmpty().isString().isLength({min : 1, max : 255}), 
-    body("dueDate").notEmpty().isString().isDate({ format : 'dd-mm-yyyy'}), 
+    body("dueDate").notEmpty().isString().isDate({ format : 'dd-mm-yyyy'}).withMessage('Date Format required is dd-mm-yyyy'), 
     (req, res, next) => {
     const result = validationResult(req);
     if(result.isEmpty()) {
         taskController.createTask(req.body, (error, result) => {
             if(error){
-                res.json(error);
+                res.status(400).json({ error: error });            
             } else {
                 res.json(successConstants.createTaskSuccess);
             }
         })
-    } else res.send({ errors: result.array() });
+    } else res.status(400).json({ error: [ {message : result.errors[0].msg}]}); 
 });
 
 router.put('/task/update', verifyAccessToken, 
@@ -119,6 +119,21 @@ router.get('/task/listAllTasks', verifyAccessToken, (req, res, next) => {
             res.json(error)
         } else res.json(result)
     })
+});
+
+router.get('/task/getById/:id', verifyAccessToken,
+    param('id').notEmpty().isInt(),
+    (req, res, next) => {
+    const result = validationResult(req);
+    if(result.isEmpty()) {
+        taskController.getTaskById(req.params.id, (error, result) => {
+            if(error){
+                res.json(error);
+            } else {
+                res.json(result)
+            }
+        })
+    } else res.send({ errors: result.array() });
 });
 
 module.exports=router;
