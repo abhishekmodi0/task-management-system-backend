@@ -30,7 +30,7 @@ const userLogin = (req, callback) => {
                 response[0].user = result[0],
                 response[0].token = token;
                 callback(error, response)
-            }
+            } else callback(errorConstants.invalidCredentials, [])
         } else {
             callback(errorConstants.invalidCredentials, [])
         }
