@@ -1,7 +1,7 @@
 {
   "name": "task-management-system-backend",
   "version": "1.0.0",
-  "description": "this project is a part of interview process for Abhishek modi at birdi systems pvt ltd having backend changes mainly.",
+  "description": "this project is a part of interview process for Abhishek modi at ATA Fright having backend changes mainly.",
   "main": "app.js",
   "scripts": {
     "start": "nodemon ./bin/www",
@@ -18,7 +18,9 @@
     "express-validator": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^6.9.15"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",

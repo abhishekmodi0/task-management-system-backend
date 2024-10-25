@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken"); 
-const userController = require("../controllers/user.controller"); 
-const errorConstants = require("../constants/errorConstants");
 const { ACCESS_TOKEN_SECRET } = process.env; 
+
+const userService = require("../services/user.service"); 
+const errorConstants = require("../constants/errorConstants");
 
 exports.verifyAccessToken = async (req, res, next) => { 
 
@@ -14,7 +15,7 @@ exports.verifyAccessToken = async (req, res, next) => {
         return res.status(401).json(errorConstants.tokenExpired);
     } finally {
         if(user){
-            userController.checkIfEmailExists(user.user, (error, result) => {
+            userService.checkIfEmailExists(user.user, (error, result) => {
                 if(error){
                     return res.status(404).json(errorConstants.invalidCredentials);
                 } else {

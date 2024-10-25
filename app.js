@@ -5,6 +5,7 @@ const cors=require('cors');
 const routes=require('./routes');
 const app = express();
 const dotenv = require("dotenv");
+const { runJob } = require('./utility/scheduledJobs') 
 
 dotenv.config();
 app.use(cors());
@@ -12,6 +13,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api', routes);
+
+//Run Scheduled Jobs to send Notifications 
+runJob;
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,28 +1,71 @@
-const db = require("../utility/dbConnection");
-const dbConstants  = require('../constants/databaseConstants');
+const {validationResult } = require("express-validator");
 
-const createTask = (req, callback) => {
-    db.query(dbConstants.createTask, [req.user[0].id, req.title, req.description, req.dueDate], callback)
+const taskService = require('../services/task.service');
+const successConstants  = require('../constants/successConstants');
+
+exports.getFormFields = (req, res) => {
+    taskService.getFormFields((err, result)=> {
+        if(err) res.status(400).json({error: [ {message : `SQL error, ${err.sqlMessage}`}]});
+        else res.status(200).json(result)
+    })
 }
 
-const updateTask = (req, callback) => {
-    db.query(dbConstants.updateTask, [req.title, req.description, req.dueDate, req.status, req.id], callback)
+exports.createTask = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: [ {message : `${errors.errors[0].msg} for ${errors.errors[0].path}`}]});
+    } else {
+        taskService.createTask(req, (err, result)=> {
+            if(err) res.status(400).json({error: [ {message : `SQL error, ${err.sqlMessage}`}]});
+            else res.status(200).json(successConstants.createTaskSuccess)
+        })
+    }
 }
 
-const updateTaskStatus = (req, callback) => {
-    db.query(dbConstants.updateTaskStatus, [req.status, req.id], callback)
+exports.editTask = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: [ {message : `${errors.errors[0].msg} for ${errors.errors[0].path}`}]});
+    } else {
+        taskService.editTask(req, (err, result)=> {
+            if(err) res.status(400).json({error: [ {message : `SQL error, ${err.sqlMessage}`}]});
+            else res.status(200).json(successConstants.updateTaskSuccess)
+        })
+    }
 }
 
-const deleteTask = (id, callback) => {
-    db.query(dbConstants.deleteTask, [id], callback)
+exports.getProjectTasks = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: [ {message : `${errors.errors[0].msg} for ${errors.errors[0].path}`}]});
+    } else {
+        taskService.getAllTasks(req, (err, result)=> {
+            if(err) res.status(400).json({error: [ {message : `SQL error, ${err.sqlMessage}`}]});
+            else res.status(200).json(result)
+        })
+    }
 }
 
-const listTasks = (req, callback) => {
-    db.query(dbConstants.getAllTasksForUser, [req[0].id], callback)
+exports.deleteTask = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: [ {message : `${errors.errors[0].msg} for ${errors.errors[0].path}`}]});
+    } else {
+        taskService.deleteTask(req.params, (err, result)=> {
+            if(err) res.status(400).json({error: [ {message : `SQL error, ${err.sqlMessage}`}]});
+            else res.status(200).json(successConstants.deleteTaskSuccess)
+        })
+    }
 }
 
-const getTaskById = (id, callback) => {
-    db.query(dbConstants.getTaskById, [id], callback)
+exports.getTaskById = (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: [ {message : `${errors.errors[0].msg} for ${errors.errors[0].path}`}]});
+    } else {
+        taskService.getTaskById(req, (err, result)=> {
+            if(err) res.status(400).json({error: [ {message : `SQL error, ${err.sqlMessage}`}]});
+            else res.status(200).json(result)
+        })
+    }
 }
-
-module.exports = {createTask, updateTask, deleteTask, listTasks, updateTaskStatus, getTaskById};
