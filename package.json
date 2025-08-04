@@ -1,7 +1,7 @@
 {
   "name": "task-management-system-backend",
   "version": "1.0.0",
-  "description": "this project is a part of interview process for Abhishek modi at ATA Fright having backend changes mainly.",
+  "description": "this project is a part of personal practice for abhishek modi",
   "main": "app.js",
   "scripts": {
     "start": "nodemon ./bin/www",
